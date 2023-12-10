@@ -1,0 +1,152 @@
+/*
+  https://tailwindcss.com/docs/customizing-colors
+  Colors: Tailwindcss Gray tones
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+*:focus {
+  outline: none;
+}
+
+body {
+  font-family: sans-serif;
+  background-color: #030712;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 10px #1e293b;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #64748b;
+  border-radius: 10px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.search-form {
+  color: #f9fafb;
+  width: 100%;
+}
+
+.search-input {
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1f2937;
+  color: #f9fafb;
+  font-size: 15px;
+  width: 60%;
+  transition: box-shadow 1s;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 4px 4px 0px #64748b;
+}
+
+.search-button {
+  display: none;
+}
+
+.profile-picture {
+  background-color: #cbd5e1;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: block;
+}
+
+.profile-picture:hover {
+  cursor: pointer;
+}
+
+.mails {
+  margin: auto;
+  width: 80%;
+  height: 70vh;
+  overflow: auto;
+}
+
+.mails ul li {
+  list-style: none;
+  background-color: #111827;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 20px;
+  border: 1px solid #64748b;
+  transition: background-color 1s;
+}
+
+.mails ul li:hover {
+  background-color: #334155;
+}
+
+.subject {
+  margin-bottom: 4px;
+}
+
+.from {
+  color: #64748b;
+}
+
+.login-form {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.login-form input {
+  background-color: #111827;
+  border: 2px solid #cbd5e1;
+  border-radius: 20px;
+  width: 50%;
+  color: #cbd5e1;
+  padding: 2%;
+  font-size: 16px;
+}
+
+.login-form input:focus {
+  border: 2px solid #cbd5e1;
+}
+
+.submit-btn {
+  width: 20%;
+  padding: 1%;
+  background-color: #334155;
+  color: white;
+  font-size: 16px;
+  box-shadow: none;
+  border: none;
+  border-radius: 20px;
+}
