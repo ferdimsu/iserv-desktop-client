@@ -20,4 +20,3 @@ We're currently working on a good documentation...
 - Written in React using Electron.
 - Calls to the underlying Iserv API of your Server.
 - Use JSON to configure your Iserv Desktop Client
-

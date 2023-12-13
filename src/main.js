@@ -9,13 +9,12 @@ const IservClient = require("./util/IservClient");
 // Create iserv client
 const iservClient = new IservClient({});
 
-// for development
-let devCacheInbox = [];
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
+
+let devInboxCache = {};
 
 /*
 ##########################
@@ -23,42 +22,55 @@ ipcMain Handler functions
 #########################
 */
 
-async function tryLogin() {
+ipcMain.handle("restore-session", async (e) => {
+  console.log("[INFO] restore-session (ipcMain)");
+
   try {
-    await iservClient.login();
+    await iservClient.restoreSession();
     return true;
-  } catch (e) {
+  } catch (err) {
     return false;
   }
-}
-
-ipcMain.handle("session", async (e) => {
-  return await tryLogin();
 });
 
 ipcMain.handle("login", async (e, auth) => {
-  iservClient.setAuth({ username: auth.username, password: auth.password });
-  return await tryLogin();
+  console.log("[INFO] login (ipcMain)");
+
+  // sleep for one second
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  try {
+    await iservClient.login({
+      username: auth.username,
+      password: auth.password,
+    });
+    return true;
+  } catch (err) {
+    return false;
+  }
 });
 
 ipcMain.handle("fetch-inbox", async (e) => {
-  // for development and ddos reasons
-  // => caching the inbox
-  if (devCacheInbox.length === 0) {
-    console.log("actually requesting");
-    try {
-      const inbox = await iservClient.fetchInbox();
-
-      // for development
-      devCacheInbox = inbox;
-
-      return devCacheInbox;
-    } catch (e) {
-      console.log(e, "Error: Failed to fetch inbox or session tempered");
-    }
+  if (
+    process.env.NODE_ENV === "development" &&
+    Object.keys(devInboxCache).length > 0
+  ) {
+    // return cached data
+    console.log("[INFO] fetch-inbox (ipcMain) - cached data");
+    return devInboxCache;
   }
 
-  return devCacheInbox;
+  console.log("[INFO] fetch-inbox (ipcMain)");
+
+  try {
+    // prod: return await iservClient.fetchInbox();
+    // dev: return cached data
+    devInboxCache = await iservClient.fetchInbox();
+    return devInboxCache;
+  } catch (e) {
+    console.log(e, "Error: Failed to fetch inbox or session tempered");
+    return {};
+  }
 });
 
 app.whenReady().then(() => {

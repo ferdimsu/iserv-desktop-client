@@ -3,49 +3,73 @@ import React, { useEffect, useState } from "react";
 import { ToolBar } from "./components/ToolBar";
 import { MailTable } from "./components/MailTable";
 import { LoginForm } from "./components/LoginForm";
+import { Loader } from "./components/Loader";
 
 export default function App() {
   const [mails, setMails] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // fetch the data from the server
+  // Controlled elements
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  // Try to restore session on startup
   useEffect(() => {
-    async function fetchMails() {
-      if (!isLoggedIn) return;
+    const restoreSession = async () => {
+      const success = await window.iserv.restoreSession();
+      setIsLoggedIn(success);
+    };
 
+    restoreSession();
+  }, []);
+
+  // Fetch mails on login
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const fetchMails = async () => {
       const result = await window.iserv.fetchInbox();
-      if (result.data) setMails(result.data);
-    }
+      if (isSubscribed && result.data) {
+        setMails(result.data);
+      }
+    };
 
-    async function hasSession() {
-      if (isLoggedIn) return;
+    if (isLoggedIn) fetchMails();
 
-      const session = await window.iserv.session();
-      if (session) setIsLoggedIn(true);
-    }
-
-    hasSession();
-    fetchMails();
+    return () => {
+      isSubscribed = false;
+    };
   }, [isLoggedIn]);
 
-  async function handleLogin(e) {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const username = e.target.username.value;
-    const password = e.target.password.value;
+
+    setLoading(true);
 
     const success = await window.iserv.login({ username, password });
-    if (success) setIsLoggedIn((v) => !v);
-    else {
-      e.target.username.value = "";
-      e.target.password.value = "";
-    }
-  }
+    setIsLoggedIn(success);
 
-  function handleSearch(searchText) {
-    console.log(`Searching for ${searchText}`);
-  }
+    setLoading(false);
+  };
 
-  if (!isLoggedIn) return <LoginForm onLogin={handleLogin} />;
+  const handleSearch = async (searchText) => {
+    console.log(searchText);
+  };
+
+  if (loading) return <Loader />;
+
+  if (!isLoggedIn)
+    return (
+      <LoginForm
+        onLogin={handleLogin}
+        username={username}
+        setUsername={setUsername}
+        password={password}
+        setPassword={setPassword}
+      />
+    );
+
   return (
     <>
       <ToolBar onSearch={handleSearch} />

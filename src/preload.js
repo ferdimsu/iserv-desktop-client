@@ -4,7 +4,7 @@
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld("iserv", {
-  fetchInbox: async () => await ipcRenderer.invoke("fetch-inbox"),
+  restoreSession: async () => await ipcRenderer.invoke("restore-session"),
   login: async (auth) => await ipcRenderer.invoke("login", auth),
-  session: async (auth) => await ipcRenderer.invoke("session"),
+  fetchInbox: async () => await ipcRenderer.invoke("fetch-inbox"),
 });
