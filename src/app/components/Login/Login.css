@@ -8,29 +8,46 @@
     gap: 10px;
 }
 
+.lock-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 1rem;
+    color: #f9fafb;
+}
+
 .login-form input {
-    background-color: #18181b;
-    border: 2px solid #cbd5e1;
-    border-radius: 20px;
     width: 25em;
-    color: #cbd5e1;
-    padding: 1rem 1rem;
-    font-size: 16px;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #27272a;
+    color: #f9fafb;
+    font-size: 15px;
+    transition: box-shadow 1s;
+    margin-bottom: 1rem;
 }
 
 .login-form input:focus {
-    border: 2px solid #cbd5e1;
+    outline: none;
+    box-shadow: 4px 4px 0px #3f3f46;
 }
 
-.submit-btn {
+.login-submit {
     width: 10em;
     padding: .75rem 1rem;
-    background-color: #3f3f46;
+    background-color: #27272a;
     color: white;
     font-size: 16px;
     box-shadow: none;
     border: none;
     border-radius: 20px;
+
+    transition: background-color .5s;
+}
+
+.login-submit:hover {
+    background-color: #27272a;
+    cursor: pointer;
 }
 
 

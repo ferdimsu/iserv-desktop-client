@@ -1,4 +1,5 @@
 import React from "react";
+import LockSvg from "../../icons/lock.svg";
 import "./Login.css";
 
 export function LoginForm({
@@ -10,6 +11,7 @@ export function LoginForm({
 }) {
   return (
     <form className="login-form" onSubmit={onLogin}>
+      <img className="lock-icon" src={LockSvg} alt="Lock" />
       <input
         name="username"
         type="text"
@@ -26,7 +28,7 @@ export function LoginForm({
         onChange={(e) => setPassword(e.target.value)}
         required
       />
-      <button className="submit-btn" type="submit">
+      <button className="login-submit" type="submit">
         Login
       </button>
     </form>
