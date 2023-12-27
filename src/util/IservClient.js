@@ -9,7 +9,6 @@ class IservClient {
   /**
    * Creates a new IservClient.
    * @param {Object} options - The options for the client.
-   * @param {string} options.sessionFilePath - The path to the session file. (default: "./sessionCookie.json")
    */
   constructor(options) {
     this.client = superagent.agent();
@@ -88,6 +87,21 @@ class IservClient {
     } catch (e) {
       return Promise.reject(e);
     }
+  }
+
+  async fetchUserInfo(username) {
+    const res = await this.client.get(
+      `https://mykhg.de/iserv/core/autocomplete/api?type=mail,list&query=${username}`
+    );
+
+    console.log(res.text);
+
+    const data = JSON.parse(res.text);
+    if (!data.length) {
+      return Promise.reject();
+    }
+
+    return Promise.resolve(data);
   }
 }
 

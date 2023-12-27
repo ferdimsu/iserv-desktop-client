@@ -1,16 +1,21 @@
 import React from "react";
 
 import { SearchBar } from "./SearchBar";
+import MenuIcon from "../icons/menu.svg";
 
-export function ToolBar({ onSearch }) {
+export function ToolBar({ onSearch, onProfile }) {
   return (
     <div className="toolbar">
       <SearchBar onSearch={onSearch} />
-      <Profile />
+      <MenuLink onProfile={onProfile} />
     </div>
   );
 }
 
-function Profile({}) {
-  return <span className="profile-picture"></span>;
+function MenuLink({ onProfile }) {
+  return (
+    <a className="menu-link" onClick={onProfile}>
+      <img src={MenuIcon} alt="Menu" />
+    </a>
+  );
 }

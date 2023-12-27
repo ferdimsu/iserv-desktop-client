@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 export function SearchBar({ onSearch }) {
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
+
+  function handleChange(e) {
+    setSearchText(e.target.value);
+    onSearch(e.target.value);
+  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -15,7 +20,7 @@ export function SearchBar({ onSearch }) {
         type="text"
         placeholder="Fast search"
         value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
+        onChange={handleChange}
       ></input>
 
       <button className="search-button" type="submit">

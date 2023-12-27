@@ -27,6 +27,7 @@ ipcMain.handle("restore-session", async (e) => {
 
   try {
     await iservClient.restoreSession();
+    console.log("[INFO] restore-session (ipcMain) - success");
     return true;
   } catch (err) {
     return false;
@@ -42,7 +43,7 @@ ipcMain.handle("login", async (e, auth) => {
   try {
     await iservClient.login({
       username: auth.username,
-      password: auth.password,
+      password: auth.password
     });
     return true;
   } catch (err) {
@@ -73,11 +74,22 @@ ipcMain.handle("fetch-inbox", async (e) => {
   }
 });
 
+ipcMain.handle("fetch-user-info", async (e, username) => {
+  console.log("[INFO] fetch-user-info (ipcMain)");
+
+  try {
+    return await iservClient.fetchUserInfo(username);
+  } catch (e) {
+    console.log(e, "Error: Failed to fetch user info or session tempered");
+    return {};
+  }
+});
+
 app.whenReady().then(() => {
   createMainWindow();
 
   app.on("activate", () => {
-    // On macOS it's common to re-create a window in the app when the
+    // On macOS, it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
   });
