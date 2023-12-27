@@ -1,0 +1,128 @@
+
+.inbox {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.toolbar {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.toolbar-search {
+    color: #f9fafb;
+    width: 60%;
+}
+
+.toolbar-search input {
+    width: 25em;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #27272a;
+    color: #f9fafb;
+    font-size: 15px;
+    transition: box-shadow 1s;
+}
+
+.toolbar-search input:focus {
+    outline: none;
+    box-shadow: 4px 4px 0px #3f3f46;
+}
+
+.toolbar-search button {
+    display: none;
+}
+
+.toolbar-icons {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.toolbar-icon {
+    color: #cbd5e1;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.toolbar-icon img {
+    width: 35px;
+    height: 35px;
+}
+
+.toolbar-sync img {
+    width: 33px;
+    height: 33px;
+}
+
+.toolbar-sync img:hover {
+    transform: rotate(360deg);
+    transition: transform 1s;
+}
+
+.mails {
+    margin-top: 2rem;
+    width: 80%;
+    height: 80vh;
+    overflow: auto;
+}
+
+.mails ul li {
+    list-style: none;
+    background-color: #18181b;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 20px;
+    border: 1px solid #3f3f46;
+    transition: background-color 1s;
+}
+
+.mails ul li:hover {
+    background-color: #3f3f46;
+}
+
+.subject {
+    margin-bottom: 4px;
+}
+
+.from {
+    color: #3f3f46;
+}
+
+
+@media (max-width: 768px) {
+
+
+    .toolbar {
+        width: 90%;
+    }
+
+    .search-form {
+        width: 80%;
+    }
+
+    .search-input {
+        width: 80%;
+    }
+
+    .mails {
+        width: 90%;
+    }
+}
