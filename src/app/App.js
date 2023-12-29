@@ -29,12 +29,13 @@ export default function App() {
     let isSubscribed = true;
 
     async function fetchMails() {
+      setLoading(true);
       const result = await window.iserv.fetchInbox();
       if (isSubscribed && result.data) {
         setMails(result.data);
       }
 
-      await window.iserv.fetchUserInfo("uwe.");
+      setLoading(false);
     }
 
     if (isLoggedIn) fetchMails();
@@ -86,6 +87,7 @@ export default function App() {
     return (
       <LoginForm
         onLogin={handleLogin}
+        isLoading={loading}
         username={username}
         setUsername={setUsername}
         password={password}
@@ -96,7 +98,7 @@ export default function App() {
   return (
     <Inbox
       mails={mails}
-      loading={loading}
+      isLoading={loading}
       onSearch={handleSearch}
       onMenu={handleMenuClick}
       onSync={handleSyncClick}

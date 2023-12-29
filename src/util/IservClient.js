@@ -2,6 +2,8 @@ const superagent = require("superagent");
 const fs = require("fs");
 const { CookieAccessInfo } = require("cookiejar");
 
+const logger = require("./logger");
+
 /**
  * Represents a client for interacting with the IServ API.
  */
@@ -16,6 +18,7 @@ class IservClient {
 
     this.options = {
       sessionFilePath: options.sessionFilePath || "./sessionCookie.json",
+      host: options.host || "mykhg.de",
     };
   }
 
@@ -24,13 +27,16 @@ class IservClient {
       return false;
     }
 
-    console.log("[INFO] using cached session");
+    logger.info(
+      "[INFO] loadSessionFromFile (IservClient) - session file exists",
+    );
+
     const content = fs.readFileSync(this.options.sessionFilePath, "utf-8");
 
     const dataJson = JSON.parse(content);
     this.client.jar.setCookie(
       `${dataJson.name}=${dataJson.value}; path=${dataJson.path}; secure; httponly; samesite=lax`,
-      "mykhg.de"
+      this.options.host,
     );
 
     return true;
@@ -39,7 +45,7 @@ class IservClient {
   saveSessionToFile() {
     const sessionCookie = this.client.jar.getCookie(
       "IServAuthSession",
-      new CookieAccessInfo("mykhg.de", "/iserv/auth", true, false)
+      new CookieAccessInfo("mykhg.de", "/iserv/auth", true, false),
     );
 
     fs.writeFile(
@@ -48,7 +54,11 @@ class IservClient {
       {
         encoding: "utf-8",
       },
-      () => {}
+      () => {
+        logger.info(
+          "[INFO] saveSessionToFile (IservClient) - session file saved",
+        );
+      },
     );
   }
 
@@ -63,7 +73,7 @@ class IservClient {
   async login(credentials) {
     // Never throws an error because the response of endpoint is always 200 => no try/catch
     const res = await this.client
-      .post("https://mykhg.de/iserv/auth/login")
+      .post(`https://${this.options.host}/iserv/auth/login`)
       .type("form")
       .send({ _username: credentials.username })
       .send({ _password: credentials.password });
@@ -71,6 +81,9 @@ class IservClient {
     if (res.headers["x-iserv-user"]) {
       this.saveSessionToFile();
       this.isLoggedIn = true;
+
+      logger.info("[INFO] login (IservClient) - success");
+
       return Promise.resolve(res);
     }
 
@@ -80,7 +93,7 @@ class IservClient {
   async fetchInbox() {
     try {
       const res = await this.client.get(
-        "https://mykhg.de/iserv/mail/api/message/list?path=INBOX&length=50&start=0&order%5Bcolumn%5D=date&order%5Bdir%5D=desc"
+        `https://${this.options.host}/iserv/mail/api/message/list?path=INBOX&length=50&start=0&order%5Bcolumn%5D=date&order%5Bdir%5D=desc`,
       );
 
       return Promise.resolve(JSON.parse(res.text));
@@ -89,19 +102,16 @@ class IservClient {
     }
   }
 
-  async fetchUserInfo(username) {
-    const res = await this.client.get(
-      `https://mykhg.de/iserv/core/autocomplete/api?type=mail,list&query=${username}`
-    );
+  async fetchMail(mailId) {
+    try {
+      const res = await this.client.get(
+        `https://${this.options.host}/iserv/mail/api/message?path=INBOX&msg=${mailId}`,
+      );
 
-    console.log(res.text);
-
-    const data = JSON.parse(res.text);
-    if (!data.length) {
-      return Promise.reject();
+      return Promise.resolve(JSON.parse(res.text));
+    } catch (e) {
+      return Promise.reject(e);
     }
-
-    return Promise.resolve(data);
   }
 }
 

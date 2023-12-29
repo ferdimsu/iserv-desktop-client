@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 
 dotenv.config({ path: "./.env" });
 
-const createMainWindow = require("./util/createMainWindow");
+const { createMainWindow } = require("./util/createMainWindow");
 const IservClient = require("./util/IservClient");
 
 // Create iserv client
@@ -43,7 +43,7 @@ ipcMain.handle("login", async (e, auth) => {
   try {
     await iservClient.login({
       username: auth.username,
-      password: auth.password
+      password: auth.password,
     });
     return true;
   } catch (err) {
@@ -74,13 +74,13 @@ ipcMain.handle("fetch-inbox", async (e) => {
   }
 });
 
-ipcMain.handle("fetch-user-info", async (e, username) => {
-  console.log("[INFO] fetch-user-info (ipcMain)");
+ipcMain.handle("fetch-mail", async (e, mailId) => {
+  console.log("[INFO] fetch-mail (ipcMain)");
 
   try {
-    return await iservClient.fetchUserInfo(username);
+    return await iservClient.fetchMail(mailId);
   } catch (e) {
-    console.log(e, "Error: Failed to fetch user info or session tempered");
+    console.log(e, "Error: Failed to fetch mail or session tempered");
     return {};
   }
 });
