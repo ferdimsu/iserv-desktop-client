@@ -3,7 +3,8 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 
 dotenv.config({ path: "./.env" });
 
-const { createMainWindow } = require("./util/createMainWindow");
+const logger = require("./util/logger");
+const createMainWindow = require("./util/createMainWindow");
 const IservClient = require("./util/IservClient");
 
 // Create iserv client
@@ -23,11 +24,9 @@ ipcMain Handler functions
 */
 
 ipcMain.handle("restore-session", async (e) => {
-  console.log("[INFO] restore-session (ipcMain)");
-
   try {
     await iservClient.restoreSession();
-    console.log("[INFO] restore-session (ipcMain) - success");
+    logger.info("restore-session (ipcMain) - start");
     return true;
   } catch (err) {
     return false;
@@ -35,16 +34,12 @@ ipcMain.handle("restore-session", async (e) => {
 });
 
 ipcMain.handle("login", async (e, auth) => {
-  console.log("[INFO] login (ipcMain)");
-
-  // sleep for one second
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
   try {
     await iservClient.login({
       username: auth.username,
       password: auth.password,
     });
+
     return true;
   } catch (err) {
     return false;
@@ -57,11 +52,9 @@ ipcMain.handle("fetch-inbox", async (e) => {
     Object.keys(devInboxCache).length > 0
   ) {
     // return cached data
-    console.log("[INFO] fetch-inbox (ipcMain) - cached data");
+    logger.info("fetch-inbox (ipcMain) - using cached data");
     return devInboxCache;
   }
-
-  console.log("[INFO] fetch-inbox (ipcMain)");
 
   try {
     // prod: return await iservClient.fetchInbox();
@@ -69,18 +62,16 @@ ipcMain.handle("fetch-inbox", async (e) => {
     devInboxCache = await iservClient.fetchInbox();
     return devInboxCache;
   } catch (e) {
-    console.log(e, "Error: Failed to fetch inbox or session tempered");
+    logger.fail("fetch-inbox (ipcMain) - failed");
     return {};
   }
 });
 
 ipcMain.handle("fetch-mail", async (e, mailId) => {
-  console.log("[INFO] fetch-mail (ipcMain)");
-
   try {
     return await iservClient.fetchMail(mailId);
   } catch (e) {
-    console.log(e, "Error: Failed to fetch mail or session tempered");
+    logger.fail("fetch-mail (ipcMain) - failed");
     return {};
   }
 });

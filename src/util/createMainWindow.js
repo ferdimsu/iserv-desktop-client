@@ -1,6 +1,6 @@
 const { BrowserWindow } = require("electron");
 
-export function createMainWindow() {
+function createMainWindow() {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -12,3 +12,5 @@ export function createMainWindow() {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   mainWindow.webContents.openDevTools();
 }
+
+module.exports = createMainWindow;

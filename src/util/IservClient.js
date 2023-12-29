@@ -14,7 +14,6 @@ class IservClient {
    */
   constructor(options) {
     this.client = superagent.agent();
-    this.isLoggedIn = false;
 
     this.options = {
       sessionFilePath: options.sessionFilePath || "./sessionCookie.json",
@@ -27,9 +26,7 @@ class IservClient {
       return false;
     }
 
-    logger.info(
-      "[INFO] loadSessionFromFile (IservClient) - session file exists",
-    );
+    logger.info("loadSessionFromFile (IservClient) - session file exists");
 
     const content = fs.readFileSync(this.options.sessionFilePath, "utf-8");
 
@@ -55,18 +52,31 @@ class IservClient {
         encoding: "utf-8",
       },
       () => {
-        logger.info(
-          "[INFO] saveSessionToFile (IservClient) - session file saved",
-        );
+        logger.success("saveSessionToFile (IservClient) - session file saved");
       },
     );
   }
 
   async restoreSession() {
     if (this.loadSessionFromFile()) {
-      this.isLoggedIn = true;
-      return Promise.resolve();
+      try {
+        const res = await this.client.get(`https://${this.options.host}/iserv`);
+        if (res.headers["x-iserv-user"]) {
+          logger.success(
+            "restoreSession (IservClient) - found valid session file",
+          );
+          return Promise.resolve(res.headers["x-iserv-user"]);
+        }
+      } catch (e) {
+        logger.fail(
+          "restoreSession (IservClient) - found invalid session file",
+        );
+
+        fs.rmSync(this.options.sessionFilePath);
+      }
     }
+
+    logger.info("restoreSession (IservClient) - no session file found");
     return Promise.reject();
   }
 
@@ -80,13 +90,12 @@ class IservClient {
 
     if (res.headers["x-iserv-user"]) {
       this.saveSessionToFile();
-      this.isLoggedIn = true;
-
-      logger.info("[INFO] login (IservClient) - success");
+      logger.success("login (IservClient) - success");
 
       return Promise.resolve(res);
     }
 
+    logger.fail("login (IservClient) - failed");
     return Promise.reject(res);
   }
 
